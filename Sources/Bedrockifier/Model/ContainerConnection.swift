@@ -328,9 +328,8 @@ public class ContainerConnection {
 }
 
 extension ContainerConnection {
-    public static func loadContainers(from config: BackupConfig, tools: ToolConfig, environment: EnvironmentConfig? = nil) throws -> [ContainerConnection] {
+    public static func loadContainers(from config: BackupConfig, tools: ToolConfig, broadcastEnabled: Bool = false) throws -> [ContainerConnection] {
         let prefixAllContainerNames = config.prefixContainerName ?? false
-        let broadcastEnabled = config.broadcastBackupCompletion ?? environment?.broadcastBackupCompletion ?? false
         var containers: [ContainerConnection] = []
         for container in config.containers?.bedrock ?? [] {
             Library.log.debug("Creating Bedrock Container Connection. (container: \(container.name))")
