@@ -69,6 +69,7 @@ public struct BackupConfig: Codable {
     public var ownership: OwnershipConfig?
     public var schedule: ScheduleConfig?
     public var loggingLevel: LoggingConfig?
+    public var broadcastBackupCompletion: Bool?
 }
 
 extension BackupConfig.ContainerConfig {

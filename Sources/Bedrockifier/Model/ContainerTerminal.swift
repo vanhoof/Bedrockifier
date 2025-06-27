@@ -32,6 +32,7 @@ protocol ContainerTerminal {
 
     func pauseAutosave() async throws
     func resumeAutosave() async throws
+    func sendCompletionMessage(_ message: String) async throws
 }
 
 private struct ErrorStrings {
@@ -80,6 +81,10 @@ struct BedrockTerminal: ContainerTerminal {
         if try await expect(saveResumeStrings, timeout: 60.0) == .noMatch {
             throw ContainerConnection.ContainerError.resumeFailed
         }
+    }
+    
+    func sendCompletionMessage(_ message: String) async throws {
+        try terminal.sendLine("say \(message)")
     }
 
     func pauseAutosave() async throws {
@@ -131,5 +136,9 @@ struct JavaTerminal: ContainerTerminal {
         if try await expect(saveResumeStrings, timeout: 60.0) == .noMatch {
             throw ContainerConnection.ContainerError.resumeFailed
         }
+    }
+    
+    func sendCompletionMessage(_ message: String) async throws {
+        try terminal.sendLine("say \(message)")
     }
 }

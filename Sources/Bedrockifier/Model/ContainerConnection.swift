@@ -46,6 +46,7 @@ public class ContainerConnection {
     let extras: [URL]?
     var playerCount: Int
     public var lastBackup: Date
+    private var broadcastEnabled: Bool = false
 
     public var isRunning: Bool { channel.isConnected }
 
@@ -220,6 +221,16 @@ public class ContainerConnection {
             Library.log.error("Backups for \(name) had failures...")
         } else {
             Library.log.info("Backups for \(name) finished successfully...")
+            
+            // Send completion message if broadcasting is enabled
+            if broadcastEnabled {
+                do {
+                    let backupName = DateFormatter.backupDateFormatter.string(from: lastBackup)
+                    try await terminal.sendCompletionMessage("Backup completed: \(name)_\(backupName)")
+                } catch {
+                    Library.log.warning("Failed to send completion message: \(error)")
+                }
+            }
         }
 
         try await resumeAutosave()
@@ -248,6 +259,10 @@ public class ContainerConnection {
     public func decrementPlayerCount() -> Int {
         playerCount = max(0, playerCount - 1)
         return playerCount
+    }
+    
+    public func setBroadcastEnabled(_ enabled: Bool) {
+        self.broadcastEnabled = enabled
     }
 
     private func backupExtras(destination: URL, extras: [URL]) throws -> String {
@@ -313,8 +328,9 @@ public class ContainerConnection {
 }
 
 extension ContainerConnection {
-    public static func loadContainers(from config: BackupConfig, tools: ToolConfig) throws -> [ContainerConnection] {
+    public static func loadContainers(from config: BackupConfig, tools: ToolConfig, environment: EnvironmentConfig? = nil) throws -> [ContainerConnection] {
         let prefixAllContainerNames = config.prefixContainerName ?? false
+        let broadcastEnabled = config.broadcastBackupCompletion ?? environment?.broadcastBackupCompletion ?? false
         var containers: [ContainerConnection] = []
         for container in config.containers?.bedrock ?? [] {
             Library.log.debug("Creating Bedrock Container Connection. (container: \(container.name))")
@@ -324,6 +340,7 @@ extension ContainerConnection {
                                                      kind: .bedrock,
                                                      worlds: container.worlds,
                                                      extras: container.extras)
+            connection.setBroadcastEnabled(broadcastEnabled)
             containers.append(connection)
         }
 
@@ -335,6 +352,7 @@ extension ContainerConnection {
                                                      kind: .java,
                                                      worlds: container.worlds,
                                                      extras: container.extras)
+            connection.setBroadcastEnabled(broadcastEnabled)
             containers.append(connection)
         }
 
@@ -356,6 +374,7 @@ extension ContainerConnection {
                                                      kind: .bedrock,
                                                      worlds: worldPaths,
                                                      extras: nil)
+            connection.setBroadcastEnabled(broadcastEnabled)
             containers.append(connection)
         }
 

@@ -42,6 +42,7 @@ trim:
   keepDays: <count of days>
   minKeep: <count of backups>
 loggingLevel: [debug or trace]
+broadcastBackupCompletion: <true/false>
 ownership:
   chown: 1000:1001
   permissions: 644
@@ -98,6 +99,12 @@ It is controlled by the following settings:
 By default the service will log all messages, warnings, and errors. If looking to get a very noisy log, or trying to diagnose issues, you can add the below setting to your configuration to get at additional detail.
 
 * `loggingLevel`: This can be set to `debug` or `trace` to enable extra logging for diagnostic purposes.
+
+### Broadcast Backup Completion
+
+This setting controls whether backup completion messages are sent to the Minecraft server chat.
+
+* `broadcastBackupCompletion`: When set to `true`, the service will send a message to the server chat after each successful backup. Players will see messages like "Backup completed: container_name_timestamp" in chat. Defaults to `false` if not specified. This can also be controlled via the `BROADCAST_BACKUP_COMPLETION` environment variable.
 
 ### Ownership
 

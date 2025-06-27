@@ -49,6 +49,9 @@ struct EnvironmentConfig {
 
     // Deprecated Settings
     let backupInterval: String?
+    
+    // Broadcast Settings
+    let broadcastBackupCompletion: Bool
 
     init() {
         // External Tools in Container
@@ -65,6 +68,9 @@ struct EnvironmentConfig {
 
         // Deprecated Settings
         self.backupInterval = ProcessInfo.processInfo.environment["BACKUP_INTERVAL"]
+        
+        // Broadcast Settings
+        self.broadcastBackupCompletion = ProcessInfo.processInfo.environment["BROADCAST_BACKUP_COMPLETION"]?.lowercased() == "true"
     }
 
     private static func configDirectory() -> String {

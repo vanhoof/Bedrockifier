@@ -13,6 +13,7 @@ Below is a full list of variables that can be provided as environment variables 
 
 * `CONFIG_FILE`: Use this in the rare case that you want to use something other than `config.yml` as the file name of your backup configuration.
 * `DATA_DIR`: Use this when you want to change the location of the `/data` directory to something different within the container. The main reason you might want to do that is if you are using a named volume for backups from multiple sources, and want your minecraft backups to live in a subfolder of that volume.
+* `BROADCAST_BACKUP_COMPLETION`: Set to `true` to enable broadcasting backup completion messages to the Minecraft server chat. When enabled, players will see "Backup completed: container_name_timestamp" messages in chat after each successful backup. Defaults to `false`.
 
 ### Deprecated Settings
 

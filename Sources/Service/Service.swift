@@ -212,7 +212,7 @@ final class BackupService {
     }
 
     private func connectContainers() async throws {
-        let containers = try ContainerConnection.loadContainers(from: config, tools: tools)
+        let containers = try ContainerConnection.loadContainers(from: config, tools: tools, environment: environment)
 
         // Attach to the containers
         if await backupActor.needsListeners() {
