@@ -31,6 +31,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      
+    - name: Set lowercase image name
+      run: |
+        echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
     - name: Set up Docker Buildx
       id: buildx
@@ -52,7 +56,7 @@ jobs:
         file: ./Docker/Dockerfile
         platforms: linux/${{ env.arch }}
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }}-${{ env.arch }}
+        tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }}-${{ env.arch }}
         build-args: |
           QEMU_CPU=max
           arch=${{ env.arch }}
@@ -70,6 +74,10 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+      
+    - name: Set lowercase image name
+      run: |
+        echo "IMAGE_NAME_LOWER=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
 
     - name: Set up Docker Buildx
       id: buildx
@@ -85,7 +93,7 @@ jobs:
 
     - name: Make Manifest - ${{ env.docker_tag }}
       if: github.event_name != 'pull_request'
-      run: bash Docker/merge.sh ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }}
+      run: bash Docker/merge.sh ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }}
 
     - name: Get Release Tag
       id: tag
@@ -94,12 +102,12 @@ jobs:
 
     - name: Make Manifest - ${{ steps.tag.outputs.tag }}
       if: github.event_name == 'release'
-      run: bash Docker/merge.sh ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.tag.outputs.tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }}
+      run: bash Docker/merge.sh ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ steps.tag.outputs.tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }}
     
     - name: Create latest tag for optional_broadcast branch
       if: github.ref == 'refs/heads/optional_broadcast'
       run: |
-        docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }}-amd64 \
-          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.docker_tag }}-arm64
-        docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest \
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }}-amd64 \
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:${{ env.docker_tag }}-arm64
+        docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_LOWER }}:latest
