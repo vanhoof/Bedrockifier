@@ -16,6 +16,7 @@ A multi-purpose tool for working with Minecraft Java and Bedrock world backups, 
 - Java backups use the same .zip backup format as the game client, making them easier to work with.
 - Takes snapshots while the server is running.
 - Supports trimming backups to limit disk space usage.
+- **NEW: Optional backup completion broadcasts** - Send "Backup completed" messages to Minecraft server chat (configurable via `BROADCAST_BACKUP_COMPLETION` environment variable or `broadcastBackupCompletion` in config.yml)
 
 ### Usage
 
